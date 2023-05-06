@@ -30,34 +30,47 @@ def apriori_propability(train):
 training_set = train
 test_set = test
 
-# def gaussian_distribution(training_set, test_set):
+def gaussian_distribution_Bayes(training_set, test_set):
 
-df_C0 = pd.DataFrame(np.nan, index=np.arange(0,len(test_set)).tolist(),
-                     columns = training_set.columns.to_list())
-df_C0["CLASS"] = 0
-df_C1 = pd.DataFrame(np.nan, index=np.arange(0, len(test_set)).tolist(),
-                     columns=training_set.columns.to_list())
-df_C1["CLASS"] = 1
+    df_C0 = pd.DataFrame(np.nan, index=np.arange(0,len(test_set)).tolist(),
+                         columns = training_set.columns.to_list())
+    df_C0["CLASS"] = 0
+    df_C1 = pd.DataFrame(np.nan, index=np.arange(0, len(test_set)).tolist(),
+                         columns=training_set.columns.to_list())
+    df_C1["CLASS"] = 1
 
-for class_id in range(2):
-    feature_id = 0
-    for i in training_set[training_set["CLASS"] == class_id]:
-        if i == "CLASS":
-            break
-        df_train = training_set[i] # [i & class_id]
-        sd = stats.stdev(df_train)
-        mean = stats.mean(df_train)
-        df_test = test_set[i]
+    for class_id in range(2):
+        feature_id = 0
+        for i in training_set:
+            if i == "CLASS":
+                break
+            df_train = training_set[training_set["CLASS"] == class_id][i]
+            sd = stats.stdev(df_train)
+            mean = stats.mean(df_train)
+            df_test = test_set[i]
 
-        f_x = 1/(sd * sqrt(2*pi)) * np.exp((-1*(df_test - mean)**2)/2*sd**2)
-        if class_id == 0:
-            df_C0.iloc[:,feature_id] = f_x
-        else:
-            df_C1.iloc[:, feature_id] = f_x
+            f_x = 1/(sd * sqrt(2*pi)) * np.exp((-1*(df_test - mean)**2)/2*sd**2)
+            if class_id == 0:
+                df_C0.iloc[:,feature_id] = f_x
+            else:
+                df_C1.iloc[:, feature_id] = f_x
 
-        feature_id += 1
+            feature_id += 1
 
 
-    # return f_x
+    return df_C0,df_C1
+
+def parzen_window_Bayes():
+    densities = []
+    class_densities = []
+    for id_class in range (2):
+        for j in range(training_set.shape[1]):
+            x = test_set[:, j]
+            kernel =
+            density =
+            class_densities.append(density)
+        densities.append(class_densities)
+    pass
+
 
 
