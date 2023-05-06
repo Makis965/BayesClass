@@ -57,8 +57,14 @@ def gaussian_distribution_Bayes(training_set, test_set):
 
             feature_id += 1
 
-
     return df_C0,df_C1
+
+df_C0,df_C1 = gaussian_distribution_Bayes(training_set, test_set)
+
+# parametry potrzebne: wielkosc okna, krok postepu okna, zakres wartosci po ktorych poruszac sie bedzie okno
+# funkcja kernel
+
+# Wybieramy test point i sprawdzamy dla danego okna prawdopoodbienstwo dla kazdej z klas.
 
 def parzen_window_Bayes():
     densities = []
@@ -66,11 +72,8 @@ def parzen_window_Bayes():
     for id_class in range (2):
         for j in range(training_set.shape[1]):
             x = test_set[:, j]
-            kernel =
-            density =
+            kernel = np.nan
+            density = np.nan
             class_densities.append(density)
         densities.append(class_densities)
     pass
-
-
-
