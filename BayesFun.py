@@ -62,9 +62,10 @@ def gaussian_distribution_Bayes(training_set, test_set):
 df_C0,df_C1 = gaussian_distribution_Bayes(training_set, test_set)
 
 # parametry potrzebne: wielkosc okna, krok postepu okna, zakres wartosci po ktorych poruszac sie bedzie okno
-# funkcja kernel
+# funkcja kernel - DO PRZEMYSLENIA TROCHE 
 
-# Wybieramy test point i sprawdzamy dla danego okna prawdopoodbienstwo dla kazdej z klas.
+# Wybieramy test point i sprawdzamy dla danego okna prawdopoodbienstwo dla kazdej z klas. 
+# ALE TO WTEDY WYGLADA JAKBY NIE TRZEBA TRANSFORMOWAC KERNELEM. 
 
 def parzen_window_Bayes():
     densities = []
