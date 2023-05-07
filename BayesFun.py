@@ -49,7 +49,7 @@ def gaussian_distribution_Bayes(training_set, test_set):
             mean = stats.mean(df_train)
             df_test = test_set[i]
 
-            f_x = 1/(sd * sqrt(2*pi)) * np.exp((-1*(df_test - mean)**2)/2*sd**2)
+            f_x = 1/(sd * sqrt(2*pi)) * np.exp((-1*(df_test - mean)**2)/(2*sd**2))
             if class_id == 0:
                 df_C0.iloc[:,feature_id] = f_x
             else:
@@ -61,20 +61,48 @@ def gaussian_distribution_Bayes(training_set, test_set):
 
 df_C0,df_C1 = gaussian_distribution_Bayes(training_set, test_set)
 
-# parametry potrzebne: wielkosc okna, krok postepu okna, zakres wartosci po ktorych poruszac sie bedzie okno
-# funkcja kernel - DO PRZEMYSLENIA TROCHE 
+# wyznaczamy parametry dla gaussa dla kazdego punktu treninowego dla zadanego sasiedztwa h
+# dla punktu testowego wyznaczamy sume prawdopodobienstwa wystapienia go w rozkładach wszystkich punktow sasiedztwa
+# mnozymy prawdopodobienstwa wszystkich zmiennych i wybieramy te klase dla ktorej iloczyn jest wiekszy
 
-# Wybieramy test point i sprawdzamy dla danego okna prawdopoodbienstwo dla kazdej z klas. 
-# ALE TO WTEDY WYGLADA JAKBY NIE TRZEBA TRANSFORMOWAC KERNELEM. 
+def parzen_window_Bayes(training_set, test_set, h):
+    # creating empty data frames for each class to fill with density propabilities
+    df_C0 = pd.DataFrame(np.nan, index=np.arange(0,len(test_set)).tolist(),
+                         columns = training_set.columns.to_list())
+    df_C0["CLASS"] = 0
+    df_C1 = pd.DataFrame(np.nan, index=np.arange(0, len(test_set)).tolist(),
+                         columns=training_set.columns.to_list())
+    df_C1["CLASS"] = 1
 
-def parzen_window_Bayes():
-    densities = []
-    class_densities = []
-    for id_class in range (2):
-        for j in range(training_set.shape[1]):
-            x = test_set[:, j]
-            kernel = np.nan
-            density = np.nan
-            class_densities.append(density)
-        densities.append(class_densities)
-    pass
+    for class_id in range(1):
+        feature_id = 0
+        for i in training_set:
+            if i == "CLASS":
+                break
+            # h = 0.5
+            df_train = training_set[training_set["CLASS"] == class_id][i]
+            df_test = test_set[i]
+            # searching for the h-area neighbours in training set for test point
+            for x_test in df_test:
+                x_test = df_test[2]
+                min_x_test = x_test - h
+                max_x_test = x_test + h
+                x_train_subset = df_train.loc[(df_train >= min_x_test) & (df_train <= max_x_test)]
+                # searching for the h-area neighbours in training set for training subset
+                propability_sum = 0
+                for parzen in x_train_subset:
+                    # calculating propabilities for h-are neighbours
+                    x_train_parzen = df_train.loc[(df_train >= parzen - h) & (df_train <= parzen + h)]
+                    sd = stats.stdev(x_train_parzen)
+                    mean = stats.mean(x_train_parzen)
+                    propability = 1/(sd * sqrt(2*pi)) * np.exp((-1*(x_test - mean)**2)/(2*sd**2))
+                    # propiability summation
+                    propability_sum += propability
+                print(propability_sum)
+            if class_id == 0:
+                df_C0.iloc[:, feature_id] = propability_sum
+            else:
+                df_C1.iloc[:, feature_id] = propability_sum
+
+            feature_id += 1
+
