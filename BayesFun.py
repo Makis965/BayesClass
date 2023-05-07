@@ -74,17 +74,17 @@ def parzen_window_Bayes(training_set, test_set, h):
                          columns=training_set.columns.to_list())
     df_C1["CLASS"] = 1
 
-    for class_id in range(1):
+    for class_id in range(2):
         feature_id = 0
         for i in training_set:
             if i == "CLASS":
                 break
-            # h = 0.5
             df_train = training_set[training_set["CLASS"] == class_id][i]
             df_test = test_set[i]
             # searching for the h-area neighbours in training set for test point
+            observation = 0
             for x_test in df_test:
-                x_test = df_test[2]
+                # x_test = df_test[2]
                 min_x_test = x_test - h
                 max_x_test = x_test + h
                 x_train_subset = df_train.loc[(df_train >= min_x_test) & (df_train <= max_x_test)]
@@ -93,16 +93,19 @@ def parzen_window_Bayes(training_set, test_set, h):
                 for parzen in x_train_subset:
                     # calculating propabilities for h-are neighbours
                     x_train_parzen = df_train.loc[(df_train >= parzen - h) & (df_train <= parzen + h)]
-                    sd = stats.stdev(x_train_parzen)
+                    if len(x_train_parzen) < 2:
+                        next
+                    else:
+                        sd = stats.stdev(x_train_parzen)
                     mean = stats.mean(x_train_parzen)
                     propability = 1/(sd * sqrt(2*pi)) * np.exp((-1*(x_test - mean)**2)/(2*sd**2))
                     # propiability summation
                     propability_sum += propability
-                print(propability_sum)
-            if class_id == 0:
-                df_C0.iloc[:, feature_id] = propability_sum
-            else:
-                df_C1.iloc[:, feature_id] = propability_sum
+                if class_id == 0:
+                    df_C0.iloc[observation, feature_id] = propability_sum
+                else:
+                    df_C1.iloc[observation, feature_id] = propability_sum
+
+                observation += 1
 
             feature_id += 1
-
