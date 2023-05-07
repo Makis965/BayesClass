@@ -29,6 +29,19 @@ def apriori_propability(train):
 
 training_set = train
 test_set = test
+data_frame = df_C0
+a = 0
+b = 1
+def multiple_df_rows(data_frame,a,b):
+    new_column = np.ones((len(data_frame),1,))
+    # new_column[:]= np.nan
+    new_column = pd.DataFrame(new_column)
+    for i in range(a,b):
+        if i == 1:
+            new_column = data_frame.iloc[:,i]
+        else:
+            new_column *= data_frame.iloc[:,i]
+    # pass
 
 def gaussian_distribution_Bayes(training_set, test_set):
 
@@ -105,7 +118,5 @@ def parzen_window_Bayes(training_set, test_set, h):
                     df_C0.iloc[observation, feature_id] = propability_sum
                 else:
                     df_C1.iloc[observation, feature_id] = propability_sum
-
                 observation += 1
-
             feature_id += 1
