@@ -34,24 +34,20 @@ a = 0
 b = 1
 def multiple_df_rows(data_frame,a,b):
     new_column = np.ones((len(data_frame),1,))
-    # new_column[:]= np.nan
     new_column = pd.DataFrame(new_column)
     for i in range(a,b):
         if i == 1:
             new_column = data_frame.iloc[:,i]
         else:
             new_column *= data_frame.iloc[:,i]
-    # pass
 
 def gaussian_distribution_Bayes(training_set, test_set):
-
     df_C0 = pd.DataFrame(np.nan, index=np.arange(0,len(test_set)).tolist(),
                          columns = training_set.columns.to_list())
     df_C0["CLASS"] = 0
     df_C1 = pd.DataFrame(np.nan, index=np.arange(0, len(test_set)).tolist(),
                          columns=training_set.columns.to_list())
     df_C1["CLASS"] = 1
-
     for class_id in range(2):
         feature_id = 0
         for i in training_set:
@@ -61,22 +57,15 @@ def gaussian_distribution_Bayes(training_set, test_set):
             sd = stats.stdev(df_train)
             mean = stats.mean(df_train)
             df_test = test_set[i]
-
             f_x = 1/(sd * sqrt(2*pi)) * np.exp((-1*(df_test - mean)**2)/(2*sd**2))
             if class_id == 0:
                 df_C0.iloc[:,feature_id] = f_x
             else:
                 df_C1.iloc[:, feature_id] = f_x
-
             feature_id += 1
-
     return df_C0,df_C1
 
 df_C0,df_C1 = gaussian_distribution_Bayes(training_set, test_set)
-
-# wyznaczamy parametry dla gaussa dla kazdego punktu treninowego dla zadanego sasiedztwa h
-# dla punktu testowego wyznaczamy sume prawdopodobienstwa wystapienia go w rozkładach wszystkich punktow sasiedztwa
-# mnozymy prawdopodobienstwa wszystkich zmiennych i wybieramy te klase dla ktorej iloczyn jest wiekszy
 
 def parzen_window_Bayes(training_set, test_set, h):
     # creating empty data frames for each class to fill with density propabilities
@@ -86,7 +75,6 @@ def parzen_window_Bayes(training_set, test_set, h):
     df_C1 = pd.DataFrame(np.nan, index=np.arange(0, len(test_set)).tolist(),
                          columns=training_set.columns.to_list())
     df_C1["CLASS"] = 1
-
     for class_id in range(2):
         feature_id = 0
         for i in training_set:
@@ -97,7 +85,6 @@ def parzen_window_Bayes(training_set, test_set, h):
             # searching for the h-area neighbours in training set for test point
             observation = 0
             for x_test in df_test:
-                # x_test = df_test[2]
                 min_x_test = x_test - h
                 max_x_test = x_test + h
                 x_train_subset = df_train.loc[(df_train >= min_x_test) & (df_train <= max_x_test)]
@@ -121,12 +108,11 @@ def parzen_window_Bayes(training_set, test_set, h):
                 observation += 1
             feature_id += 1
 
-# Create a numpy array of zeros with the desired shape
+# Synthetic dataset
 samples = 200
 features = 8
 C0_nfeat = np.zeros((samples, features))
 C1_nfeat = np.zeros((samples, features))
-
 
 for i in range((np.shape(C0_nfeat)[1])):
     C0_nfeat[:,i] = np.random.exponential(scale=1/0.5, size=samples)
@@ -135,7 +121,6 @@ for i in range((np.shape(C1_nfeat)[1])):
     C1_nfeat[:, i] = np.random.uniform(low = -1, high=1, size=samples)
 
 import scipy.io
-
 dir = r'C:\Users\barba\Desktop\II STOPIEŃ\I semestr\Classifiers\Bayes'
 from scipy.io import loadmat
 import os
