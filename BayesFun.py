@@ -120,3 +120,37 @@ def parzen_window_Bayes(training_set, test_set, h):
                     df_C1.iloc[observation, feature_id] = propability_sum
                 observation += 1
             feature_id += 1
+
+# Create a numpy array of zeros with the desired shape
+samples = 200
+features = 8
+C0_nfeat = np.zeros((samples, features))
+C1_nfeat = np.zeros((samples, features))
+
+
+for i in range((np.shape(C0_nfeat)[1])):
+    C0_nfeat[:,i] = np.random.exponential(scale=1/0.5, size=samples)
+
+for i in range((np.shape(C1_nfeat)[1])):
+    C1_nfeat[:, i] = np.random.uniform(low = -1, high=1, size=samples)
+
+import scipy.io
+
+dir = r'C:\Users\barba\Desktop\II STOPIEŃ\I semestr\Classifiers\Bayes'
+from scipy.io import loadmat
+import os
+files = []
+for file in os.listdir(dir):
+    if file.endswith(".mat"):
+        files.append(os.path.join(dir, file))
+
+mat = loadmat(files[0])
+data_train = pd.DataFrame(mat.get('dane_train'))
+classes_train = pd.DataFrame(mat.get('etykiety_train'))
+frames_train= [data_train,classes_train]
+microarray_train = pd.concat(frames_train)
+
+data_test = pd.DataFrame(mat.get('dane_test'))
+classes_test = pd.DataFrame(mat.get('etykiety_test'))
+frames = [data_test,classes_test]
+microarray_test = pd.concat(frames)
