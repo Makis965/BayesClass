@@ -1,5 +1,3 @@
 # BayesClass
 
-Krótko i na temat
-
-fakty
+Naive Bayes classifier and Parzen (with Gaussian Kernel) classifier functions. 
